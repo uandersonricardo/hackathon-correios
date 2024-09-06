@@ -24,6 +24,7 @@ module.exports = {
   },
   "ignorePatterns": [".eslintrc.cjs"],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "no-unused-vars": "off"
   }
 }
