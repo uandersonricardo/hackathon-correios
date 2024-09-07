@@ -20,7 +20,7 @@ class LLM {
 
   public async ask(prompt: string, context: string) {
     const response = await this.api.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',

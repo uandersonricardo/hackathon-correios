@@ -16,7 +16,7 @@ class AIService {
 
     console.info(context)
 
-    return await this.llm.ask(prompt, context.content)
+    return { response: await this.llm.ask(prompt, context.result), document: context.document }
   }
 }
 

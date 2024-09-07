@@ -1,4 +1,5 @@
 import { QdrantClient } from '@qdrant/js-client-rest'
+import { readFileFromAssets } from '../utils/file'
 
 type RAGPayload = {
   content: string
@@ -14,7 +15,13 @@ class RAG {
 
   public async search(vector: number[]) {
     const response = await this.client.search(process.env.QDRANT_COLLECTION ?? '', { vector, limit: 1 })
-    return response[0].payload as RAGPayload
+
+    if (response.length === 0) {
+      return { result: '', document: null }
+    }
+
+    const path = (response[0].payload as RAGPayload).path
+    return { result: readFileFromAssets(path), document: path }
   }
 }
 
