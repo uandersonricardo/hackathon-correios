@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
+import { getFileName, getStorageUrl } from '@/lib/file'
 import { ask } from '@/services/ai'
-import { ArrowRightIcon } from 'lucide-vue-next'
+import { ArrowRightIcon, ExternalLinkIcon, FileIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -14,6 +15,7 @@ const question = route.query.q ?? ''
 type Data = {
   mine: boolean
   content: string
+  document: string | null
 }
 
 const loading = ref(false)
@@ -22,7 +24,8 @@ const data = ref<Data[]>([])
 const scroll = ref<HTMLDivElement>()
 
 const handleEnter = async () => {
-  data.value.push({ mine: true, content: prompt.value })
+  const search = prompt.value
+  data.value.push({ mine: true, content: search, document: null })
   prompt.value = ''
 
   loading.value = true
@@ -31,8 +34,8 @@ const handleEnter = async () => {
   scroll.value?.scrollTo(0, scroll.value.scrollHeight)
 
   try {
-    const response = await ask(prompt.value)
-    data.value.push({ mine: false, content: response })
+    const { response, document } = await ask(search)
+    data.value.push({ mine: false, content: response, document: document })
 
     await nextTick()
     scroll.value?.scrollTo(0, scroll.value.scrollHeight)
@@ -46,8 +49,8 @@ const handleEnter = async () => {
 onMounted(async () => {
   loading.value = true
   try {
-    const response = await ask(question.toString())
-    data.value.push({ mine: false, content: response })
+    const { response, document } = await ask(question.toString())
+    data.value.push({ mine: false, content: response, document: document })
 
     await nextTick()
     scroll.value?.scrollTo(0, scroll.value.scrollHeight)
@@ -90,6 +93,17 @@ onMounted(async () => {
           {{ response.content }}
         </h1>
         <MarkdownRenderer v-else :source="response.content" />
+        <div
+          v-if="response.document"
+          class="p-3 rounded-lg border border-neutral-70 inline-flex items-center text-xs max-w-60 font-semibold text-neutral-20"
+        >
+          {{ getFileName(response.document) }}
+          <a :href="getStorageUrl(response.document)" target="_blank">
+            <ExternalLinkIcon
+              :size="18"
+              class="ml-3 text-neutral-40 flex-shrink-0 hover:text-neutral-30"
+          /></a>
+        </div>
       </div>
       <div v-if="loading" class="w-full animate-pulse pt-8 mb-6">
         <div class="h-5 bg-neutral-60 rounded-full w-[50%] mb-5"></div>

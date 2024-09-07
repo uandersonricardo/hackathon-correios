@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+declare module 'markdown-it-image-figures'
+
 type Answer = {
   id: string
   content: string
@@ -56,3 +58,4 @@ type FindQuestionResponse =
       comments: (ForumComment & { author: User })[]
     })
   | null
+type AskAIResponse = { response: string; document: string }

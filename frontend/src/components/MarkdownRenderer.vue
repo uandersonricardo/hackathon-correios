@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MarkdownIt from 'markdown-it'
+import { preprocessMarkdownImages } from '@/lib/file'
 
 const markdown = new MarkdownIt()
 
@@ -12,7 +13,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="markdown" v-html="markdown.render(source)"></div>
+  <div class="markdown" v-html="markdown.render(preprocessMarkdownImages(source))"></div>
 </template>
 
 <style scoped>
@@ -44,6 +45,10 @@ defineProps({
   @apply text-base leading-7 mb-4;
 }
 
+.markdown :deep(li > p) {
+  @apply text-base leading-7 mb-4 inline;
+}
+
 .markdown :deep(ul) {
   @apply list-disc list-inside mb-4;
 }
@@ -69,7 +74,7 @@ defineProps({
 }
 
 .markdown :deep(pre) {
-  @apply bg-gray-900 text-gray-100 font-mono text-sm p-4 rounded overflow-x-auto mb-4;
+  @apply bg-gray-100 text-gray-100 font-mono text-sm p-4 rounded overflow-x-auto mb-4;
 }
 
 .markdown :deep(hr) {
@@ -77,7 +82,7 @@ defineProps({
 }
 
 .markdown :deep(img) {
-  @apply max-w-full h-auto rounded;
+  @apply max-w-full h-auto rounded my-2;
 }
 
 .markdown :deep(table) {
