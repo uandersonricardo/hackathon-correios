@@ -1,6 +1,6 @@
 # Hackathon Correios
 
-Repositório da solução desenvolvida para o Hackathon Correios na Campus Party Nordeste 2024.
+Repositório da solução desenvolvida para o Hackathon Correios na Campus Party Nordeste 2024 pela equipe MUNix, composta por Marina Paixão, Natalie Chaves e Uanderson Ricardo.
 
 ## Visão Geral
 
