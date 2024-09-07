@@ -54,7 +54,7 @@ import { RouterLink } from 'vue-router'
             <div class="flex-1">
               <input
                 type="text"
-                class="text-2xl font-semibold text-primary-20 mb-1 p-0 outline-none"
+                class="text-2xl font-semibold text-primary-20 mb-1 p-0 outline-none w-full"
                 placeholder="Título"
               />
               <div class="flex items-center mb-4 text-neutral-40 text-xs">

@@ -8,7 +8,7 @@ import router from './router'
 
 const app = createApp(App)
 
-app.use(Toast, { position: POSITION.BOTTOM_CENTER } as PluginOptions)
 app.use(router)
+app.use(Toast, { position: POSITION.BOTTOM_CENTER } as PluginOptions)
 
 app.mount('#app')
