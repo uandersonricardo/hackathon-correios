@@ -1,6 +1,38 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { SearchIcon } from 'lucide-vue-next'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { createQuestion } from '@/services/questions'
+import { useToast } from 'vue-toastification'
+
+const router = useRouter()
+const toast = useToast()
+
+const loading = ref(false)
+const title = ref('')
+const content = ref('')
+
+const handleSave = async () => {
+  if (title.value === '' || content.value === '') {
+    toast.warning('Preencha os campos')
+    return
+  }
+
+  loading.value = true
+
+  try {
+    const { id } = await createQuestion({
+      title: title.value,
+      content: content.value,
+      authorId: 'user1'
+    })
+    router.push(`/questions/${id}`)
+  } catch (err) {
+    toast.error('Erro na criação da pergunta')
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -23,7 +55,6 @@ import { RouterLink } from 'vue-router'
   <section class="flex-1 bg-neutral-95 overflow-auto">
     <div class="container mx-auto flex py-12 gap-6">
       <div class="flex-1">
-        <!-- Main Question Card -->
         <div class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6">
           <div class="flex items-start">
             <div class="flex flex-col items-center mr-6">
@@ -56,6 +87,7 @@ import { RouterLink } from 'vue-router'
                 type="text"
                 class="text-2xl font-semibold text-primary-20 mb-1 p-0 outline-none w-full"
                 placeholder="Título"
+                v-model="title"
               />
               <div class="flex items-center mb-4 text-neutral-40 text-xs">
                 <p>Postado por <span class="font-bold">Uanderson</span> &middot; Agora</p>
@@ -63,6 +95,7 @@ import { RouterLink } from 'vue-router'
               <textarea
                 class="outline-none text-neutral-20 w-full h-80"
                 placeholder="Escreva sua pergunta"
+                v-model="content"
               ></textarea>
             </div>
           </div>
@@ -70,13 +103,13 @@ import { RouterLink } from 'vue-router'
       </div>
 
       <aside class="w-full md:w-1/4 px-6 mb-8 md:mb-0">
-        <RouterLink to="/questions">
-          <button
-            class="w-full bg-primary-30 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-primary-20 focus:outline-none focus:ring-2 focus:ring-primary-30"
-          >
-            Salvar
-          </button>
-        </RouterLink>
+        <button
+          class="w-full bg-primary-30 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-primary-20 focus:outline-none focus:ring-2 focus:ring-primary-30"
+          :disabled="loading"
+          @click="handleSave"
+        >
+          {{ loading ? 'Salvando...' : 'Salvar' }}
+        </button>
 
         <nav class="mt-8">
           <h2 class="text-xl font-semibold text-primary-30">Sugestões</h2>

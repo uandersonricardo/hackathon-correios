@@ -82,7 +82,7 @@ defineProps({
 }
 
 .markdown :deep(img) {
-  @apply max-w-full h-auto rounded my-2;
+  @apply max-w-full h-auto rounded my-2 max-h-[400px];
 }
 
 .markdown :deep(table) {

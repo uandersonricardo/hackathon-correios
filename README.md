@@ -1,6 +1,10 @@
 # Hackathon Correios
 
-Repositório da solução desenvolvida para o Hackathon Correios na Campus Party Nordeste 2024 pela equipe MUNix, composta por Marina Paixão, Natalie Chaves e Uanderson Ricardo.
+Repositório da solução desenvolvida para o **Hackathon Correios** na **Campus Party Nordeste 2024** pela equipe MUNix, composta por Marina Paixão, Natalie Chaves e Uanderson Ricardo.
+
+## Sobre o projeto
+
+**Co.responde** é uma plataforma desenvolvida pela equipe MUNix para apoiar os atendentes dos Correios, oferecendo um acesso rápido e intuitivo a informações detalhadas sobre a execução de serviços. Utilizando a técnica de RAG (Retrieval-Augmented Generation), a plataforma permite que os atendentes façam consultas semelhantes a um assistente virtual, como o ChatGPT, onde as respostas são geradas com base em documentos internos, garantindo precisão e confiabilidade. Além disso, Co.responde destaca os serviços mais comuns e oferece um fórum colaborativo para dúvidas específicas, promovendo um atendimento mais eficiente e uma rede de apoio entre os colaboradores.
 
 ## Visão Geral
 

@@ -9,3 +9,8 @@ export const findQuestion = async (id: string) => {
   const response = await api.get<FindQuestionResponse>(`/questions/${id}`)
   return response.data
 }
+
+export const createQuestion = async (data: CreateQuestionRequest) => {
+  const response = await api.post<CreateQuestionResponse>('/questions', data)
+  return response.data
+}

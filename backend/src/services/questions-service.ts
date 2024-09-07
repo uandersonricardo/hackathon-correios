@@ -1,8 +1,9 @@
-import User from 'models/user'
+import User from '../models/user'
 import Question from '../models/question'
 import Answer from '../models/answer'
 import Comment from '../models/comment'
 import BaseRepository from '../repositories/base-repository'
+import { randomUUID } from 'crypto'
 
 class QuestionsService {
   private readonly questionRepository: BaseRepository<Question>
@@ -56,6 +57,26 @@ class QuestionsService {
     const response = { ...question, comments, answers, author }
 
     return response
+  }
+
+  public async create(data: Partial<Question>) {
+    const id = randomUUID()
+
+    this.questionRepository.create(id, {
+      id,
+      authorId: data.authorId ?? '',
+      content: data.content ?? 'Sem descrição',
+      createdAt: new Date(),
+      downvotes: 0,
+      resolved: false,
+      tags: [],
+      title: data.title ?? 'Nova pergunta',
+      updatedAt: new Date(),
+      upvotes: 0,
+      views: 0
+    })
+
+    return { id }
   }
 }
 

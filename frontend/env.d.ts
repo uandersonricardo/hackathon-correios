@@ -50,7 +50,20 @@ type User = {
   updatedAt: Date
 }
 
+type CreateQuestionRequest = {
+  title: string
+  content: string
+  authorId: string
+}
+
+type CreateAnswerRequest = {
+  content: string
+  authorId: string
+  questionId: string
+}
+
 type ListQuestionsResponse = (Question & { author: User; answers: number })[]
+
 type FindQuestionResponse =
   | (Question & {
       author: User
@@ -58,4 +71,13 @@ type FindQuestionResponse =
       comments: (ForumComment & { author: User })[]
     })
   | null
+
 type AskAIResponse = { response: string; document: string }
+
+type CreateQuestionResponse = {
+  id: string
+}
+
+type CreateAnswerResponse = {
+  id: string
+}

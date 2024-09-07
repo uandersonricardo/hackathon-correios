@@ -20,6 +20,12 @@ class QuestionsController {
 
     res.status(200).json(result)
   }
+
+  public async create(req: Request, res: Response) {
+    const result = await this.questionsService.create(req.body)
+
+    res.status(200).json(result)
+  }
 }
 
 export default QuestionsController

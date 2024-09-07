@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import AppLoading from '@/components/AppLoading.vue'
+import { createAnswer } from '@/services/answers'
 import { findQuestion } from '@/services/questions'
-import { MessageCircleIcon, SearchIcon } from 'lucide-vue-next'
+import { MessageCircleIcon, SearchIcon, UserCircleIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 
 const route = useRoute()
@@ -11,10 +12,14 @@ const toast = useToast()
 
 const id = route.params.id
 const loading = ref(false)
+const loadingButton = ref(false)
 const question = ref<FindQuestionResponse>(null)
+const answer = ref('')
 
-onMounted(async () => {
-  loading.value = true
+const fetchQuestion = async (shouldLoad = true) => {
+  if (shouldLoad) {
+    loading.value = true
+  }
 
   try {
     question.value = await findQuestion(id.toString())
@@ -23,6 +28,35 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleSave = async () => {
+  if (answer.value === '') {
+    toast.warning('Preencha os campos')
+    return
+  }
+
+  loadingButton.value = true
+
+  try {
+    await createAnswer({
+      content: answer.value,
+      questionId: id.toString(),
+      authorId: 'user1'
+    })
+
+    answer.value = ''
+  } catch (err) {
+    toast.error('Erro na criação da resposta')
+  } finally {
+    loadingButton.value = false
+  }
+
+  await fetchQuestion(false)
+}
+
+onMounted(async () => {
+  await fetchQuestion()
 })
 </script>
 
@@ -169,6 +203,30 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6">
+          <textarea
+            class="outline-none text-neutral-20 w-full h-40"
+            placeholder="Escreva sua resposta"
+            v-model="answer"
+          ></textarea>
+          <div class="flex items-center justify-between text-neutral-40 text-xs">
+            <div class="flex items-center gap-2">
+              <UserCircleIcon :size="14"></UserCircleIcon>
+              <p>
+                Postar como
+                <span class="font-bold">Uanderson</span> &middot; Agora
+              </p>
+            </div>
+            <button
+              class="bg-primary-30 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-primary-20 focus:outline-none focus:ring-2 focus:ring-primary-30"
+              :disabled="loading"
+              @click="handleSave"
+            >
+              {{ loading ? 'Enviando...' : 'Responder' }}
+            </button>
           </div>
         </div>
       </div>

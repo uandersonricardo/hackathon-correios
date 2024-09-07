@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 import { UserCircleIcon } from 'lucide-vue-next'
+
+const route = useRoute()
 </script>
 
 <template>
-  <header class="w-full bg-secondary-50">
+  <header class="w-full bg-secondary-50" v-if="route.name !== 'home'">
     <div class="container mx-auto py-3 flex items-center gap-2 justify-between">
       <RouterLink to="/">
         <img alt="Correios logo" class="h-5" src="@/assets/correios.svg" />

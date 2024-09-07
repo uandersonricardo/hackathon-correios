@@ -1,5 +1,6 @@
 import AIService from './ai-service'
 import QuestionsService from './questions-service'
+import AnswersService from './answers-service'
 import { llm, rag } from '../external'
 import { answerRepository, commentRepository, questionRepository, userRepository } from '../repositories'
 
@@ -10,3 +11,4 @@ export const questionsService = new QuestionsService(
   answerRepository,
   commentRepository
 )
+export const answersService = new AnswersService(answerRepository)
