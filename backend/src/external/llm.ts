@@ -2,7 +2,7 @@ import OpenAI, { ClientOptions } from 'openai'
 
 import { buildPrompt } from '../lib/prompt'
 
-class ChatGPT {
+class LLM {
   private readonly api: OpenAI
   private readonly configuration: ClientOptions
 
@@ -36,6 +36,4 @@ class ChatGPT {
   }
 }
 
-const llm = new ChatGPT()
-
-export default llm
+export default LLM

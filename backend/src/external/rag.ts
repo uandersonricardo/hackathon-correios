@@ -5,7 +5,7 @@ type RAGPayload = {
   path: string
 }
 
-class Qdrant {
+class RAG {
   private readonly client: QdrantClient
 
   constructor() {
@@ -18,6 +18,4 @@ class Qdrant {
   }
 }
 
-const rag = new Qdrant()
-
-export default rag
+export default RAG
