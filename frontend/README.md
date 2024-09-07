@@ -1,39 +1,37 @@
-# frontend
+# Frontend - Hackathon Correios
 
-This template should help get you started developing with Vue 3 in Vite.
+## Visão Geral
 
-## Recommended IDE Setup
+Este repositório foi desenvolvido durante o **Hackathon Correios** e contém a interface de usuário do projeto. O frontend é construído utilizando o framework **Vue.js** com **TypeScript** e **TailwindCSS**, proporcionando uma interface moderna, responsiva e interativa para os usuários.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+O objetivo deste frontend é permitir a interação com as funcionalidades do sistema desenvolvido durante o hackathon, apresentando os dados de forma clara e intuitiva.
 
-## Type Support for `.vue` Imports in TS
+## Pré-requisitos
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Node.js (versão 18.x ou superior)
 
-## Customize configuration
+Para instalar as dependências do projeto, execute:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 yarn
 ```
 
-### Compile and Hot-Reload for Development
+## Desenvolvimento
 
-```sh
+Durante o desenvolvimento, é possível rodar o servidor de desenvolvimento local para visualizar as alterações em tempo real. Execute o comando:
+
+```bash
 yarn dev
 ```
 
-### Type-Check, Compile and Minify for Production
+O servidor estará disponível em `http://localhost:5173/`, onde você poderá ver o aplicativo em execução.
 
-```sh
+## Build para Produção
+
+Para criar uma versão otimizada do aplicativo para produção, utilize o comando:
+
+```bash
 yarn build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-yarn lint
-```
+Os arquivos otimizados serão gerados na pasta `dist/`, prontos para serem implantados em um servidor web.
