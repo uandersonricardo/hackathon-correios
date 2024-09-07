@@ -1,50 +1,6 @@
 <script setup lang="ts">
-import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
-import {
-  ArrowRightIcon,
-  MessageCircleIcon,
-  SearchIcon,
-  UserCircleIcon,
-  UserIcon
-} from 'lucide-vue-next'
-import { onMounted, ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
-
-const route = useRoute()
-
-const question = route.query.q ?? ''
-
-const defaultResponse = `# Programa Remessa Conforme
-
-O **Programa Remessa Conforme** é uma iniciativa da Receita Federal que visa agilizar e regularizar a taxação de compras internacionais feitas por consumidores brasileiros. Aqui está um passo a passo básico de como funciona:
-
-1. **Escolha do Produto**: Selecione um produto em um marketplace participante do programa Remessa Conforme.
-2. **Cálculo do Imposto**: O marketplace calcula o imposto de importação e o adiciona ao preço do produto.
-3. **Pagamento**: Você paga o valor total da compra já com o imposto incluído.
-4. **Declaração e Repasso**: O marketplace declara e repassa o valor do imposto à Receita Federal antes da remessa ser enviada para o Brasil.
-
-Ao comprar em sites certificados pelo programa, você paga os impostos antecipadamente, o que geralmente resulta em uma entrega mais rápida, pois a encomenda passa menos tempo na alfândega.
-
-Se precisar de mais detalhes ou tiver alguma dúvida específica, estou aqui para ajudar!
-`
-
-type Data = {
-  mine: boolean
-  content: string
-}
-
-const loading = ref(false)
-const data = ref<Data[]>([])
-
-onMounted(async () => {
-  loading.value = true
-  await new Promise((resolve) => setTimeout(() => resolve(true), 2000))
-
-  loading.value = false
-  data.value.push({ mine: false, content: defaultResponse })
-  data.value.push({ mine: true, content: 'certo, continue pf' })
-  data.value.push({ mine: false, content: defaultResponse })
-})
+import { SearchIcon } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 </script>
 
 <template>
@@ -114,11 +70,13 @@ onMounted(async () => {
       </div>
 
       <aside class="w-full md:w-1/4 px-6 mb-8 md:mb-0">
-        <button
-          class="w-full bg-primary-30 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-primary-20 focus:outline-none focus:ring-2 focus:ring-primary-30"
-        >
-          Salvar
-        </button>
+        <RouterLink to="/questions">
+          <button
+            class="w-full bg-primary-30 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-primary-20 focus:outline-none focus:ring-2 focus:ring-primary-30"
+          >
+            Salvar
+          </button>
+        </RouterLink>
 
         <nav class="mt-8">
           <h2 class="text-xl font-semibold text-primary-30">Sugestões</h2>

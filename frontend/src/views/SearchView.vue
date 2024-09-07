@@ -1,26 +1,15 @@
 <script setup lang="ts">
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
-import { ArrowRightIcon, UserCircleIcon } from 'lucide-vue-next'
-import { onMounted, ref } from 'vue'
+import { ask } from '@/services/ai'
+import { ArrowRightIcon } from 'lucide-vue-next'
+import { nextTick, onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
 const route = useRoute()
+const toast = useToast()
 
 const question = route.query.q ?? ''
-
-const defaultResponse = `# Programa Remessa Conforme
-
-O **Programa Remessa Conforme** é uma iniciativa da Receita Federal que visa agilizar e regularizar a taxação de compras internacionais feitas por consumidores brasileiros. Aqui está um passo a passo básico de como funciona:
-
-1. **Escolha do Produto**: Selecione um produto em um marketplace participante do programa Remessa Conforme.
-2. **Cálculo do Imposto**: O marketplace calcula o imposto de importação e o adiciona ao preço do produto.
-3. **Pagamento**: Você paga o valor total da compra já com o imposto incluído.
-4. **Declaração e Repasso**: O marketplace declara e repassa o valor do imposto à Receita Federal antes da remessa ser enviada para o Brasil.
-
-Ao comprar em sites certificados pelo programa, você paga os impostos antecipadamente, o que geralmente resulta em uma entrega mais rápida, pois a encomenda passa menos tempo na alfândega.
-
-Se precisar de mais detalhes ou tiver alguma dúvida específica, estou aqui para ajudar!
-`
 
 type Data = {
   mine: boolean
@@ -28,16 +17,45 @@ type Data = {
 }
 
 const loading = ref(false)
+const prompt = ref('')
 const data = ref<Data[]>([])
+const scroll = ref<HTMLDivElement>()
+
+const handleEnter = async () => {
+  data.value.push({ mine: true, content: prompt.value })
+  prompt.value = ''
+
+  loading.value = true
+
+  await nextTick()
+  scroll.value?.scrollTo(0, scroll.value.scrollHeight)
+
+  try {
+    const response = await ask(prompt.value)
+    data.value.push({ mine: false, content: response })
+
+    await nextTick()
+    scroll.value?.scrollTo(0, scroll.value.scrollHeight)
+  } catch (err) {
+    toast.error('Erro ao perguntar para a IA')
+  } finally {
+    loading.value = false
+  }
+}
 
 onMounted(async () => {
   loading.value = true
-  await new Promise((resolve) => setTimeout(() => resolve(true), 2000))
+  try {
+    const response = await ask(question.toString())
+    data.value.push({ mine: false, content: response })
 
-  loading.value = false
-  data.value.push({ mine: false, content: defaultResponse })
-  data.value.push({ mine: true, content: 'certo, continue pf' })
-  data.value.push({ mine: false, content: defaultResponse })
+    await nextTick()
+    scroll.value?.scrollTo(0, scroll.value.scrollHeight)
+  } catch (err) {
+    toast.error('Erro ao perguntar para a IA')
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
@@ -57,7 +75,7 @@ onMounted(async () => {
       </div>
     </div>
   </section>
-  <section class="flex-1 bg-neutral-95 overflow-auto">
+  <section ref="scroll" class="flex-1 bg-neutral-95 overflow-auto scroll-smooth">
     <div class="container mx-auto flex flex-col justify-start">
       <div
         v-for="(response, index) in data"
@@ -95,9 +113,12 @@ onMounted(async () => {
         type="text"
         placeholder="Digite qualquer dúvida"
         class="flex-grow py-3 px-6 border-none focus:outline-none text-gray-800 bg-transparent"
+        v-model="prompt"
+        @keypress.enter="handleEnter"
       />
       <button
         class="bg-primary-30 hover:bg-primary-20 text-white font-semibold rounded-full h-10 w-10 flex justify-center items-center"
+        @click="handleEnter"
       >
         <ArrowRightIcon :size="20" />
       </button>

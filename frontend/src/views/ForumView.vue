@@ -1,49 +1,26 @@
 <script setup lang="ts">
-import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
-import {
-  ArrowRightIcon,
-  MessageCircleIcon,
-  SearchIcon,
-  UserCircleIcon,
-  UserIcon
-} from 'lucide-vue-next'
+import AppLoading from '@/components/AppLoading.vue'
+import { listQuestions } from '@/services/questions'
+import { MessageCircleIcon, SearchIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
-const route = useRoute()
-
-const question = route.query.q ?? ''
-
-const defaultResponse = `# Programa Remessa Conforme
-
-O **Programa Remessa Conforme** é uma iniciativa da Receita Federal que visa agilizar e regularizar a taxação de compras internacionais feitas por consumidores brasileiros. Aqui está um passo a passo básico de como funciona:
-
-1. **Escolha do Produto**: Selecione um produto em um marketplace participante do programa Remessa Conforme.
-2. **Cálculo do Imposto**: O marketplace calcula o imposto de importação e o adiciona ao preço do produto.
-3. **Pagamento**: Você paga o valor total da compra já com o imposto incluído.
-4. **Declaração e Repasso**: O marketplace declara e repassa o valor do imposto à Receita Federal antes da remessa ser enviada para o Brasil.
-
-Ao comprar em sites certificados pelo programa, você paga os impostos antecipadamente, o que geralmente resulta em uma entrega mais rápida, pois a encomenda passa menos tempo na alfândega.
-
-Se precisar de mais detalhes ou tiver alguma dúvida específica, estou aqui para ajudar!
-`
-
-type Data = {
-  mine: boolean
-  content: string
-}
+const toast = useToast()
 
 const loading = ref(false)
-const data = ref<Data[]>([])
+const questions = ref<ListQuestionsResponse>([])
 
 onMounted(async () => {
   loading.value = true
-  await new Promise((resolve) => setTimeout(() => resolve(true), 2000))
 
-  loading.value = false
-  data.value.push({ mine: false, content: defaultResponse })
-  data.value.push({ mine: true, content: 'certo, continue pf' })
-  data.value.push({ mine: false, content: defaultResponse })
+  try {
+    questions.value = await listQuestions()
+  } catch (err) {
+    toast.error('Erro na listagem de perguntas')
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
@@ -81,173 +58,39 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6">
-          <RouterLink to="/questions/1">
-            <h2 class="text-2xl font-semibold text-primary-20 mb-1">
-              Qual é o procedimento para revisão de tributos?
-            </h2>
-          </RouterLink>
+        <AppLoading v-if="loading"></AppLoading>
+        <div v-else>
+          <div
+            v-for="question in questions"
+            :key="question.id"
+            class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6"
+          >
+            <RouterLink :to="`/questions/${question.id}`">
+              <h2 class="text-2xl font-semibold text-primary-20 mb-1">
+                {{ question.title }}
+              </h2>
+            </RouterLink>
 
-          <div class="flex items-center mb-4 text-neutral-40 text-xs">
-            <p>Postado por <span class="font-bold">Ana_Paula</span> &middot; 3 dias atrás</p>
-          </div>
+            <div class="flex items-center mb-4 text-neutral-40 text-xs">
+              <p>
+                Postado por <span class="font-bold">{{ question.author.name }}</span> &middot; 3
+                dias atrás
+              </p>
+            </div>
 
-          <p class="text-neutral-20 mb-4">
-            Next, when I saw the additional material available to the participants, the first
-            thought was to use LLMs (because of the hype and ease of integration) with RAG. I was
-            excited to try RAG in a real context, so it seems a great idea to try. Also, as the
-            hackathon was to help the atendants of Correios to use the tools, forms, etc., natural
-            language with a knowledge base would be a great feature of something bigger that I would
-            discuss with my design teammates.
-          </p>
+            <p class="text-neutral-20 mb-4">
+              {{ question.content }}
+            </p>
 
-          <div class="flex items-center justify-between">
-            <!-- Link to View Responses -->
-            <a href="#" class="flex items-center text-primary-40 hover:underline">
-              <MessageCircleIcon :size="16" class="mr-2" />
-              Ver respostas (1)
-            </a>
-
-            <!-- Icon for Share -->
-            <button class="text-gray-500 hover:text-primary-10 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-share w-5 h-5">
-                <path d="M4 12v.01"></path>
-                <path d="M8 12v.01"></path>
-                <path d="M16 12v.01"></path>
-                <path d="M12 16v.01"></path>
-                <path d="M12 8v.01"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6">
-          <h2 class="text-2xl font-semibold text-primary-20 mb-1">
-            Qual é o procedimento para revisão de tributos?
-          </h2>
-
-          <div class="flex items-center mb-4 text-neutral-40 text-xs">
-            <p>Postado por <span class="font-bold">Ana_Paula</span> &middot; 3 dias atrás</p>
-          </div>
-
-          <p class="text-neutral-20 mb-4">
-            Next, when I saw the additional material available to the participants, the first
-            thought was to use LLMs (because of the hype and ease of integration) with RAG. I was
-            excited to try RAG in a real context, so it seems a great idea to try. Also, as the
-            hackathon was to help the atendants of Correios to use the tools, forms, etc., natural
-            language with a knowledge base would be a great feature of something bigger that I would
-            discuss with my design teammates.
-          </p>
-
-          <div class="flex items-center justify-between">
-            <!-- Link to View Responses -->
-            <a href="#" class="flex items-center text-primary-40 hover:underline">
-              <MessageCircleIcon :size="16" class="mr-2" />
-              Ver respostas (1)
-            </a>
-
-            <!-- Icon for Share -->
-            <button class="text-gray-500 hover:text-primary-10 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-share w-5 h-5">
-                <path d="M4 12v.01"></path>
-                <path d="M8 12v.01"></path>
-                <path d="M16 12v.01"></path>
-                <path d="M12 16v.01"></path>
-                <path d="M12 8v.01"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6">
-          <h2 class="text-2xl font-semibold text-primary-20 mb-1">
-            Qual é o procedimento para revisão de tributos?
-          </h2>
-
-          <div class="flex items-center mb-4 text-neutral-40 text-xs">
-            <p>Postado por <span class="font-bold">Ana_Paula</span> &middot; 3 dias atrás</p>
-          </div>
-
-          <p class="text-neutral-20 mb-4">
-            Next, when I saw the additional material available to the participants, the first
-            thought was to use LLMs (because of the hype and ease of integration) with RAG. I was
-            excited to try RAG in a real context, so it seems a great idea to try. Also, as the
-            hackathon was to help the atendants of Correios to use the tools, forms, etc., natural
-            language with a knowledge base would be a great feature of something bigger that I would
-            discuss with my design teammates.
-          </p>
-
-          <div class="flex items-center justify-between">
-            <!-- Link to View Responses -->
-            <a href="#" class="flex items-center text-primary-40 hover:underline">
-              <MessageCircleIcon :size="16" class="mr-2" />
-              Ver respostas (1)
-            </a>
-
-            <!-- Icon for Share -->
-            <button class="text-gray-500 hover:text-primary-10 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-share w-5 h-5">
-                <path d="M4 12v.01"></path>
-                <path d="M8 12v.01"></path>
-                <path d="M16 12v.01"></path>
-                <path d="M12 16v.01"></path>
-                <path d="M12 8v.01"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6">
-          <h2 class="text-2xl font-semibold text-primary-20 mb-1">
-            Qual é o procedimento para revisão de tributos?
-          </h2>
-
-          <div class="flex items-center mb-4 text-neutral-40 text-xs">
-            <p>Postado por <span class="font-bold">Ana_Paula</span> &middot; 3 dias atrás</p>
-          </div>
-
-          <p class="text-neutral-20 mb-4">
-            Next, when I saw the additional material available to the participants, the first
-            thought was to use LLMs (because of the hype and ease of integration) with RAG. I was
-            excited to try RAG in a real context, so it seems a great idea to try. Also, as the
-            hackathon was to help the atendants of Correios to use the tools, forms, etc., natural
-            language with a knowledge base would be a great feature of something bigger that I would
-            discuss with my design teammates.
-          </p>
-
-          <div class="flex items-center justify-between">
-            <!-- Link to View Responses -->
-            <a href="#" class="flex items-center text-primary-40 hover:underline">
-              <MessageCircleIcon :size="16" class="mr-2" />
-              Ver respostas (1)
-            </a>
-          </div>
-        </div>
-
-        <div class="bg-white border border-neutral-90 shadow-sm rounded-lg p-6 mb-6">
-          <h2 class="text-2xl font-semibold text-primary-20 mb-1">
-            Qual é o procedimento para revisão de tributos?
-          </h2>
-
-          <div class="flex items-center mb-4 text-neutral-40 text-xs">
-            <p>Postado por <span class="font-bold">Ana_Paula</span> &middot; 3 dias atrás</p>
-          </div>
-
-          <p class="text-neutral-20 mb-4">
-            Next, when I saw the additional material available to the participants, the first
-            thought was to use LLMs (because of the hype and ease of integration) with RAG. I was
-            excited to try RAG in a real context, so it seems a great idea to try. Also, as the
-            hackathon was to help the atendants of Correios to use the tools, forms, etc., natural
-            language with a knowledge base would be a great feature of something bigger that I would
-            discuss with my design teammates.
-          </p>
-
-          <div class="flex items-center justify-between">
-            <!-- Link to View Responses -->
-            <a href="#" class="flex items-center text-primary-40 hover:underline">
-              <MessageCircleIcon :size="16" class="mr-2" />
-              Ver respostas (1)
-            </a>
+            <div class="flex items-center justify-between">
+              <RouterLink
+                :to="`/questions/${question.id}`"
+                class="flex items-center text-primary-40 hover:underline"
+              >
+                <MessageCircleIcon :size="16" class="mr-2" />
+                Ver respostas ({{ question.answers }})
+              </RouterLink>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,22 @@
 <script setup lang="ts">
-import { ArrowRightIcon, UserCircleIcon } from 'lucide-vue-next'
-import { RouterLink } from 'vue-router'
+import { ArrowRightIcon } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+
+const router = useRouter()
+const toast = useToast()
+
+const search = ref('')
+
+const handleEnter = () => {
+  if (search.value === '') {
+    toast.warning('Digite alguma coisa para continuar')
+    return
+  }
+
+  router.push(`/search?q=${search.value}`)
+}
 </script>
 
 <template>
@@ -13,23 +29,40 @@ import { RouterLink } from 'vue-router'
       <div class="w-full max-w-xl flex items-center px-1 shadow-lg bg-white rounded-full">
         <input
           type="text"
+          v-model="search"
           placeholder="Digite qualquer dúvida"
           class="flex-grow py-3 px-6 border-none focus:outline-none text-gray-800 bg-transparent"
+          @keypress.enter="handleEnter"
         />
-        <RouterLink to="/search?q=como fazer remessa conforme?">
-          <button
-            class="bg-primary-30 hover:bg-primary-20 text-white font-semibold rounded-full h-10 w-10 flex justify-center items-center"
-          >
-            <ArrowRightIcon :size="20" />
-          </button>
-        </RouterLink>
+        <button
+          class="bg-primary-30 hover:bg-primary-20 text-white font-semibold rounded-full h-10 w-10 flex justify-center items-center"
+          @click="handleEnter"
+        >
+          <ArrowRightIcon :size="20" />
+        </button>
       </div>
       <div class="text-sm mt-6 text-secondary-20 gap-2 flex items-center">
         <span>Buscas populares:</span>
-        <span class="px-3 py-1 bg-secondary-30/50 rounded-full text-white">atraso</span>
-        <span class="px-3 py-1 bg-secondary-30/50 rounded-full text-white">rota</span>
-        <span class="px-3 py-1 bg-secondary-30/50 rounded-full text-white">remessa</span>
-        <span class="px-3 py-1 bg-secondary-30/50 rounded-full text-white">extravio</span>
+        <RouterLink to="/search?q=atraso">
+          <span class="px-3 py-1 bg-secondary-30/50 hover:bg-secondary-30 rounded-full text-white"
+            >atraso</span
+          >
+        </RouterLink>
+        <RouterLink to="/search?q=rota">
+          <span class="px-3 py-1 bg-secondary-30/50 hover:bg-secondary-30 rounded-full text-white"
+            >rota</span
+          >
+        </RouterLink>
+        <RouterLink to="/search?q=remessa">
+          <span class="px-3 py-1 bg-secondary-30/50 hover:bg-secondary-30 rounded-full text-white"
+            >remessa</span
+          >
+        </RouterLink>
+        <RouterLink to="/search?q=extravio">
+          <span class="px-3 py-1 bg-secondary-30/50 hover:bg-secondary-30 rounded-full text-white"
+            >extravio</span
+          >
+        </RouterLink>
       </div>
     </div>
   </section>
